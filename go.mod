@@ -1,4 +1,4 @@
-module lego
+module github.com/colinso/lego
 
 go 1.19
 

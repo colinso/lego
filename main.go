@@ -1,11 +1,12 @@
 package main
 
 import (
-	"lego/actions/config"
-	"lego/actions/generator"
-	"lego/actions/utils"
 	"log"
 	"os"
+
+	"github.com/colinso/lego/actions/config"
+	"github.com/colinso/lego/actions/generator"
+	"github.com/colinso/lego/actions/utils"
 
 	"github.com/urfave/cli/v2"
 )

@@ -4,8 +4,9 @@ import (
 	"errors"
 	"fmt"
 	"io/fs"
-	"lego/actions/config"
 	"os"
+
+	"github.com/colinso/lego/actions/config"
 )
 
 type FileLocation int64

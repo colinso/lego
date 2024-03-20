@@ -2,8 +2,9 @@ package generator
 
 import (
 	"fmt"
-	"lego/actions/utils"
 	"text/template"
+
+	"github.com/colinso/lego/actions/utils"
 )
 
 func generateFile(name string, templateFile string, config any, ftype utils.FileLocation) error {

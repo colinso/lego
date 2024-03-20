@@ -2,11 +2,12 @@ package actions
 
 import (
 	"fmt"
-	"lego/actions/config"
-	"lego/actions/utils"
-	"lego/configmodels"
 	"os"
 	"text/template"
+
+	"github.com/colinso/lego/actions/config"
+	"github.com/colinso/lego/actions/utils"
+	"github.com/colinso/lego/configmodels"
 )
 
 const modelTemplatePath = "./templates/model.tmpl"

@@ -2,14 +2,15 @@ package utils
 
 import (
 	"fmt"
-	"lego/actions/config"
-	"lego/configmodels"
 	"regexp"
 	"strconv"
 	"strings"
 	"text/template"
 	"unicode"
 	"unicode/utf8"
+
+	"github.com/colinso/lego/actions/config"
+	"github.com/colinso/lego/configmodels"
 
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"

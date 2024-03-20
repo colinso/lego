@@ -1,10 +1,11 @@
 package utils
 
 import (
-	"lego/actions/config"
-	"lego/configmodels"
 	"reflect"
 	"testing"
+
+	"github.com/colinso/lego/actions/config"
+	"github.com/colinso/lego/configmodels"
 )
 
 func TestTemplateUtils_TypeOf(t *testing.T) {

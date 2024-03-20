@@ -1,8 +1,9 @@
 package config
 
 import (
-	"lego/configmodels"
 	"os"
+
+	"github.com/colinso/lego/configmodels"
 
 	"gopkg.in/yaml.v3"
 )
