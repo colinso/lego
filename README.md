@@ -1,1 +1,11 @@
 # lego
+- Bugs
+    - Can't guarantee order of maps
+- Generate:
+    - Server
+    - Router
+    - Commands
+- Use swaggo to generate swagger doc
+- Allow for default service configs
+- Outline http responses and corresponding errors
+    - Outline errors to create

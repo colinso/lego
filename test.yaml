@@ -1,0 +1,45 @@
+name: testservice
+appConfig: #TODO: Handle env types. Should be able to assume
+  AppName: testservice
+  Host: localhost
+  Port: 8080
+  EnvVar: hellothere
+models:
+  - name: APIHandlerRequest
+    fields:
+      id: string
+      value: int
+  - name: APIHandlerResponse
+    fields:
+      Id: string
+      Address: string
+      FirstName: string
+      StructVal: APIHandlerRequest
+
+http:
+  - handlerName: GetObject
+    method: GET
+    path: /api/handler/{id}
+    requestBody: APIHandlerRequest
+    responseBody: APIHandlerResponse
+    # function: ClassManager.GetClass
+
+logic:
+  - name: ObjectManager
+    methods:
+      - name: GetObject
+        accepts:
+          test: string
+          another: int
+          tryThis: bool
+        returns:
+          - error
+  - name: ClassManager
+    methods:
+      - name: GetClass
+        accepts:
+          test: string
+          another: int
+          tryThis: bool
+        returns:
+          - int

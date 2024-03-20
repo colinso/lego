@@ -1,0 +1,27 @@
+package api
+
+import (
+	"{{ GetServiceName }}/internal/config"
+	"fmt"
+	"net/http"
+	"github.com/apex/log"
+	"github.com/go-chi/chi/v5"
+)
+
+type Server struct {
+	cfg        *config.Config
+	router     *chi.Mux
+}
+
+func NewServer(cfg *config.Config, router *chi.Mux) *Server {
+	return &Server{
+		cfg:        cfg,
+		router:     router,
+	}
+}
+
+func (s Server) Start() error {
+	address := fmt.Sprintf("%s:%v", s.cfg.Host, s.cfg.Port)
+	log.Infof("Starting up at %s", address)
+	return http.ListenAndServe(address, s.router)
+}

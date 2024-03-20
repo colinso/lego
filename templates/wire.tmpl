@@ -1,0 +1,23 @@
+//go:build wireinject
+// +build wireinject
+
+package wire
+
+import (
+	"{{.Name}}/internal/api"
+	"{{.Name}}/internal/config"
+	"{{.Name}}/internal/handlers"
+
+	"github.com/google/wire"
+)
+
+func ConfigureServer() *api.Server {
+	wire.Build(
+		config.NewConfig,
+		api.NewServer,
+		api.NewRouter,
+
+		handlers.Component,
+	)
+	return &api.Server{}
+}

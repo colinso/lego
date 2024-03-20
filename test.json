@@ -1,0 +1,21 @@
+{
+    "name": "testservice",
+    "models": {
+        "APIHandlerRequest": {
+            "id": "string",
+            "value": "int"
+        },
+        "APIHandlerResponse": {
+            "value": "int"
+        }
+    },
+    "http": [
+        {
+            "handler": "APIHandler",
+            "method": "GET",
+            "path": "/test",
+            "request": "APIHandlerRequest",
+            "response": "APIHandlerResponse"
+        }
+    ]
+}

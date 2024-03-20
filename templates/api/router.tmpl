@@ -1,0 +1,15 @@
+package api
+
+import (
+	"{{ GetServiceName }}/internal/handlers"
+
+	"github.com/go-chi/chi/v5"
+)
+
+func NewRouter({{ range $value := . }}
+        {{ FirstToLower $value.Name }} *handlers.{{ $value.Name }}Handler,
+    ) *chi.Mux {
+	r := chi.NewRouter()
+    r.Method("{{ $value.Method }}", "{{ $value.Path }}", {{ FirstToLower $value.Name }})
+	return r
+}{{ end }}

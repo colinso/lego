@@ -1,0 +1,21 @@
+package logic
+{{ $n := .Name}}
+import (
+	"{{ GetServiceName }}/internal/models"
+	"context"
+
+	"github.com/apex/log"
+)
+
+type {{ .Name }} struct {
+}
+
+func New{{ .Name }}() *{{ .Name }} {
+	return &{{ .Name }}{}
+}
+
+{{ range .Methods }} 
+func ({{ GetFirstLetter $n }} {{ $n }}) {{ .Name }}({{range $k, $v := .Accepts}}{{$k}} {{$v}},{{end}}) ({{range .Returns}}{{.}},{{end}}) {
+	return {{range .Returns}}{{ZeroValue .}},{{end}}
+}
+{{ end }}

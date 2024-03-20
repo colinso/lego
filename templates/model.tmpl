@@ -1,0 +1,5 @@
+package models
+
+type {{ .Name }} struct { {{ range $key, $value := .Fields }} 
+    {{ $key }}   {{ $value }}{{ end }}
+}

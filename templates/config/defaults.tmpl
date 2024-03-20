@@ -1,0 +1,6 @@
+package config
+
+// defaultConfig will ONLY be used when running locally
+var defaultConfig = Config{ {{ range $key, $value := . }} 
+    {{ $key }}: {{ $value }},{{ end }}
+}
