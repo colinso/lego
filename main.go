@@ -30,7 +30,7 @@ func main() {
 					}
 					appName := config.GetConfig().Name
 					//TODO: Update this to take location as an argument
-					utils.RunCleanupShellCommands(appName, projectPath+"/"+appName)
+					utils.RunCleanupShellCommands(appName, projectPath)
 					return nil
 				},
 			},

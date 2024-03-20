@@ -18,7 +18,7 @@ func ParseConfig(configPath string, projectPath string) {
 	yaml.Unmarshal(file, &cfg)
 	cfg.ProjectPath = projectPath
 	// Ensure essential configs are in place
-	cfg.AppConfig.Validate()
+	cfg.Validate()
 }
 
 // TODO: This is test damage, we don't need to expose this

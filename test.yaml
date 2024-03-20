@@ -15,9 +15,16 @@ models:
       Address: string
       FirstName: string
       StructVal: APIHandlerRequest
+  - name: MyTableModel
+    fields:
+      Id: string
+      FirstName: string
+      LastName: string
+      Address: string
+      Age: int
 
 http:
-  - handlerName: GetObject
+  - handlerName: GetObjectHandler
     method: GET
     path: /api/handler/{id}
     requestBody: APIHandlerRequest
@@ -43,3 +50,13 @@ logic:
           tryThis: bool
         returns:
           - int
+
+db:
+  type: postgres
+  user: user
+  password: password
+  name: testservice
+  schema:
+    - tableName:
+      model: MyTableModel
+

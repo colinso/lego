@@ -7,7 +7,7 @@ import (
 )
 
 func NewRouter({{ range $value := . }}
-        {{ FirstToLower $value.Name }} *handlers.{{ $value.Name }}Handler,
+        {{ FirstToLower $value.Name }} *handlers.{{ $value.Name }},
     ) *chi.Mux {
 	r := chi.NewRouter()
     r.Method("{{ $value.Method }}", "{{ $value.Path }}", {{ FirstToLower $value.Name }})

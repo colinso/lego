@@ -10,17 +10,17 @@ import (
 type {{ .Name }}Command interface { {{ with .Function}}
 	{{ GetMethodSignatureByName . }}{{ end }}
 }
-type {{ .Name }}Handler struct {
+type {{ .Name }} struct {
 	{{with .Function}}cmd {{ $name }}Command{{end}}
 }
 
-func New{{ .Name }}Handler({{ with .Function }}cmd *logic.{{GetFunctionClass .}}{{ end }}) *{{ .Name }}Handler {
-	return &{{ .Name }}Handler{
+func New{{ .Name }}({{ with .Function }}cmd *logic.{{GetFunctionClass .}}{{ end }}) *{{ .Name }} {
+	return &{{ .Name }}{
 		{{with .Function}}cmd: cmd,{{end}}
 	}
 }
 
-func (h {{ .Name }}Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (h {{ .Name }}) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	var body models.{{ .RequestBody }}
 	json.NewDecoder(r.Body).Decode(&body)
 	{{ with .Function}}
@@ -31,7 +31,7 @@ func (h {{ .Name }}Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	{{else}}
-	response := fmt.Sprintf("Hit {{.Name}}Handler with body: %v%", body)
+	response := fmt.Sprintf("Hit {{.Name}} with body: %v%", body)
 	{{end}}
 	b, _ := json.Marshal(response)
 	w.Write(b)

@@ -7,8 +7,11 @@ type GeneratorConfig struct {
 	Models      []ModelConfig       `yaml:"models"`
 	HTTP        []HTTPHandlerConfig `yaml:"http"`
 	Logic       []LogicConfig       `yaml:"logic"`
+	Database    DBConfig            `yaml:"db"`
 }
 
 func (c GeneratorConfig) Validate() {
 	ValidateFields(c)
+	c.AppConfig.Validate()
+	c.Database.Validate()
 }

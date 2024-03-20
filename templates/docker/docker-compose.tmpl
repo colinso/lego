@@ -1,0 +1,30 @@
+version: '3'
+services: {{with .Database }}
+  db: {{ if eq .Type "postgres" }}
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: {{ .User }}
+      POSTGRES_PASSWORD: {{ .Password }}
+      POSTGRES_DB: {{ .Name }}
+    ports:
+      - "5432:5432"
+    {{ else if eq .Type "mysql" }}
+    image: mysql:latest
+    restart: always
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: {{ .Password }}
+      MYSQL_DATABASE: {{ .Name }}
+      MYSQL_USER: {{ .User }}
+      MYSQL_PASSWORD: {{ .Password }}
+    {{ else if eq .Type eq "mongo" }}
+    image: mongo:latest
+    container_name: {{ .Name }}
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./data:/data/db
+    restart: always
+    {{end}}
+  {{end}}
