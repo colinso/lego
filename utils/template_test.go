@@ -4,8 +4,8 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/colinso/lego/actions/config"
-	"github.com/colinso/lego/configmodels"
+	"github.com/colinso/lego/config"
+	configmodels "github.com/colinso/lego/config/models"
 )
 
 func TestTemplateUtils_TypeOf(t *testing.T) {
@@ -57,12 +57,12 @@ func TestTemplateUtils_ZeroValue(t *testing.T) {
 
 func TestTemplateUtils_GetMethodSignatureByValue(t *testing.T) {
 	type test struct {
-		input configmodels.MethodConfig
+		input configmodels.Method
 		want  string
 	}
 
 	tests := []test{
-		{input: configmodels.MethodConfig{
+		{input: configmodels.Method{
 			Name:    "TestMethod",
 			Accepts: map[string]string{"arg1": "string", "arg2": "bool", "arg3": "TestConfigObject"},
 			Returns: []string{"int", "error"},
@@ -78,11 +78,11 @@ func TestTemplateUtils_GetMethodSignatureByValue(t *testing.T) {
 }
 
 func TestTemplateUtils_GetMethodSignatureByName(t *testing.T) {
-	config.SetConfig(configmodels.GeneratorConfig{
-		Logic: []configmodels.LogicConfig{
+	config.SetConfig(configmodels.Base{
+		Logic: []configmodels.Service{
 			{
 				Name: "TestClass",
-				Methods: []configmodels.MethodConfig{
+				Methods: []configmodels.Method{
 					{
 						Name: "Add",
 						Accepts: map[string]string{
@@ -123,11 +123,11 @@ func TestTemplateUtils_GetMethodSignatureByName(t *testing.T) {
 }
 
 func TestTemplateUtils_GetHandlerLogicMethodString(t *testing.T) {
-	config.SetConfig(configmodels.GeneratorConfig{
-		Logic: []configmodels.LogicConfig{
+	config.SetConfig(configmodels.Base{
+		Logic: []configmodels.Service{
 			{
 				Name: "TestClass",
-				Methods: []configmodels.MethodConfig{
+				Methods: []configmodels.Method{
 					{
 						Name: "Add",
 						Accepts: map[string]string{

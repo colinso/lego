@@ -3,12 +3,12 @@ package config
 import (
 	"os"
 
-	"github.com/colinso/lego/configmodels"
+	configmodels "github.com/colinso/lego/config/models"
 
 	"gopkg.in/yaml.v3"
 )
 
-var cfg *configmodels.GeneratorConfig
+var cfg *configmodels.Base
 
 func ParseConfig(configPath string, projectPath string) {
 	file, err := os.ReadFile(configPath)
@@ -22,11 +22,11 @@ func ParseConfig(configPath string, projectPath string) {
 }
 
 // TODO: This is test damage, we don't need to expose this
-func SetConfig(config configmodels.GeneratorConfig) {
+func SetConfig(config configmodels.Base) {
 	cfg = &config
 }
 
-func GetConfig() configmodels.GeneratorConfig {
+func GetConfig() configmodels.Base {
 	if cfg == nil {
 		panic("No configuration has been parsed")
 	}

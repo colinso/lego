@@ -1,22 +1,22 @@
 package generator
 
 import (
-	"github.com/colinso/lego/actions/config"
-	"github.com/colinso/lego/actions/utils"
-	"github.com/colinso/lego/configmodels"
+	"github.com/colinso/lego/config"
+	configmodels "github.com/colinso/lego/config/models"
+	"github.com/colinso/lego/utils"
 )
 
-type CodeGenerator struct {
-	cfg configmodels.GeneratorConfig
+type TemplateManager struct {
+	cfg configmodels.Base
 }
 
-func NewCodeGenerator() *CodeGenerator {
-	return &CodeGenerator{
+func NewCodeGenerator() *TemplateManager {
+	return &TemplateManager{
 		cfg: config.GetConfig(),
 	}
 }
 
-type FileDataParams struct {
+type FileData struct {
 	Name            string
 	Extension       utils.FileExtension
 	TemplatePath    string
@@ -25,10 +25,10 @@ type FileDataParams struct {
 	HasConstructor  bool
 }
 
-func (c CodeGenerator) Generate() error {
-	config := c.cfg
+func (m TemplateManager) Generate() error {
+	config := m.cfg
 	// Generate individual files
-	filesToGenerate := []FileDataParams{
+	filesToGenerate := []FileData{
 		{
 			Name:            "main",
 			TemplatePath:    "./templates/main.tmpl",
@@ -111,9 +111,9 @@ func (c CodeGenerator) Generate() error {
 	}
 
 	// Generate packages and groups of files
-	handlerFiles := make([]FileDataParams, 0)
+	handlerFiles := make([]FileData, 0)
 	for _, handler := range config.HTTP {
-		handlerFiles = append(handlerFiles, FileDataParams{
+		handlerFiles = append(handlerFiles, FileData{
 			Name:            handler.Name,
 			TemplatePath:    "./templates/handler.tmpl",
 			FileDestination: utils.Handler,
@@ -123,9 +123,9 @@ func (c CodeGenerator) Generate() error {
 		})
 	}
 
-	modelFiles := make([]FileDataParams, 0)
+	modelFiles := make([]FileData, 0)
 	for _, model := range config.Models {
-		modelFiles = append(modelFiles, FileDataParams{
+		modelFiles = append(modelFiles, FileData{
 			Name:            model.Name,
 			TemplatePath:    "./templates/model.tmpl",
 			FileDestination: utils.Model,

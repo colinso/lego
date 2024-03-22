@@ -1,5 +1,5 @@
 package models
-
+{{/* Expects modelConfig */}}
 type {{ .Name }} struct { {{ range $key, $value := .Fields }} 
     {{ $key }}   {{ $value }}{{ end }}
 }

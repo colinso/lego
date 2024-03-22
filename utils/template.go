@@ -9,8 +9,8 @@ import (
 	"unicode"
 	"unicode/utf8"
 
-	"github.com/colinso/lego/actions/config"
-	"github.com/colinso/lego/configmodels"
+	"github.com/colinso/lego/config"
+	configmodels "github.com/colinso/lego/config/models"
 
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
@@ -24,7 +24,8 @@ const (
 )
 
 var TemplateFuncs = template.FuncMap(map[string]any{
-	"GetServiceName": func() string { return config.GetConfig().Name },
+	"GetServiceName": func() string { return config.GetConfig().AppConfig["AppName"] },
+	"GetModuleName":  func() string { return config.GetConfig().Name },
 	"ToConfigCase": func(str string) string {
 		var matchFirstCap = regexp.MustCompile("(.)([A-Z][a-z]+)")
 		var matchAllCap = regexp.MustCompile("([a-z0-9])([A-Z])")
@@ -61,7 +62,7 @@ func GetHandlerLogicMethodString(name string) string {
 	return fmt.Sprintf("response, err := h.cmd.%v(%v)", m.Name, argsString)
 }
 
-func GetLogicMethod(name string) configmodels.MethodConfig {
+func GetLogicMethod(name string) configmodels.Method {
 	names := strings.Split(name, ".")
 	logics := config.GetConfig().Logic
 	for _, v := range logics {

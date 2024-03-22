@@ -1,10 +1,10 @@
 package configmodels
 
-type ModelConfig struct {
+type Model struct {
 	Name   string            `yaml:"name"`
 	Fields map[string]string `yaml:"fields"`
 }
 
-func (c ModelConfig) Validate() {
+func (c Model) Validate() {
 	ValidateFields(c)
 }

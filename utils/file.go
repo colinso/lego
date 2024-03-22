@@ -6,7 +6,7 @@ import (
 	"io/fs"
 	"os"
 
-	"github.com/colinso/lego/actions/config"
+	"github.com/colinso/lego/config"
 )
 
 type FileExtension string

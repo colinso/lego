@@ -7,12 +7,13 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/colinso/lego/actions/utils"
+	"github.com/colinso/lego/utils"
 )
 
 const componentTemplateLocation = "./templates/component.tmpl"
 
-func GeneratePackage(packageName string, data []FileDataParams, ftype utils.FileLocation) {
+// Generates a group of files to a single location with a component.go file
+func GeneratePackage(packageName string, data []FileData, ftype utils.FileLocation) {
 	constructorNames := make([]string, 0)
 	for _, d := range data {
 		if d.HasConstructor {
@@ -28,7 +29,7 @@ func GeneratePackage(packageName string, data []FileDataParams, ftype utils.File
 		Objects:     constructorNames,
 	}
 
-	data = append(data, FileDataParams{
+	data = append(data, FileData{
 		Name:            "component",
 		TemplatePath:    componentTemplateLocation,
 		ConfigModel:     componentConfig,
@@ -38,10 +39,11 @@ func GeneratePackage(packageName string, data []FileDataParams, ftype utils.File
 	GenerateAll(data)
 }
 
-func GenerateAll(files []FileDataParams) error {
+// Generates a group of files
+func GenerateAll(files []FileData) error {
 	errs := make([]string, 0)
 	for _, file := range files {
-		err := generateFile(file)
+		err := GenerateFile(file)
 		if err != nil {
 			errs = append(errs, err.Error())
 		}
@@ -49,7 +51,8 @@ func GenerateAll(files []FileDataParams) error {
 	return errors.New("Errors: " + strings.Join(errs, ","))
 }
 
-func generateFile(file FileDataParams) error {
+// Generates a single file
+func GenerateFile(file FileData) error {
 	templateFile, err := os.ReadFile(file.TemplatePath)
 	if err != nil {
 		return err

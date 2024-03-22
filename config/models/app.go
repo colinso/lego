@@ -5,9 +5,9 @@ import (
 	"strconv"
 )
 
-type AppConfig map[string]string
+type App map[string]string
 
-func (a AppConfig) Validate() {
+func (a App) Validate() {
 	_, appNameOk := a["AppName"]
 	_, hostOk := a["Host"]
 	_, portOk := a["Port"]

@@ -4,9 +4,9 @@ import (
 	"log"
 	"os"
 
-	"github.com/colinso/lego/actions/config"
-	"github.com/colinso/lego/actions/generator"
-	"github.com/colinso/lego/actions/utils"
+	"github.com/colinso/lego/config"
+	"github.com/colinso/lego/generator"
+	"github.com/colinso/lego/utils"
 
 	"github.com/urfave/cli/v2"
 )
