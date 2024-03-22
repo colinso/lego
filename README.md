@@ -32,3 +32,4 @@ Run your service with `make run` from the project root. This will start an HTTP 
 - cli tool support
 - Only overwrite existing files if specified --> Ask for confirmation?
 - Error handling
+    - Test config validation

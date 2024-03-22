@@ -10,8 +10,8 @@ appConfig:
 models:
   - name: APIHandlerRequest
     fields:
-      id: string
-      value: int
+      Id: string
+      Value: int
   - name: APIHandlerResponse
     fields:
       Id: string
@@ -33,7 +33,7 @@ http:
     path: /api/handler/{id}
     requestBody: APIHandlerRequest
     responseBody: APIHandlerResponse
-    # service: ClassManager.GetClass
+    service: ClassManager.GetClass
 
 # A service is a container for business logic
 services:
@@ -44,15 +44,12 @@ services:
           test: string
           another: int
           tryThis: bool
-        returns:
-          - error
   - name: ClassManager
     methods:
       - name: GetClass
         accepts:
-          test: string
-          another: int
-          tryThis: bool
+          id: string
+          value: int
         returns: int # this will only return a single type and an error. Create a model to accommodate anything more than a single return value.
 
 # Sets up a local database docker container for you and initial migration files according to a schema model

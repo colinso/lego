@@ -2,28 +2,28 @@ package handlers
 {{/* Expects httpHandlerConfig */}}
 import (
 	"{{ GetModuleName }}/internal/models"
+	{{ with .Service}}"{{ GetModuleName }}/internal/services"{{end}}
 	"encoding/json"
 	"net/http"
-	"fmt"
 )
 {{ $name := .Name}}
-type {{ .Name }}Command interface { {{ with .Function}}
+type {{ .Name }}Service interface { {{ with .Service}}
 	{{ GetMethodSignatureByName . }}{{ end }}
 }
 type {{ .Name }} struct {
-	{{with .Function}}cmd {{ $name }}Command{{end}}
+	{{with .Service}}service {{ $name }}Service{{end}}
 }
 
-func New{{ .Name }}({{ with .Function }}cmd *logic.{{GetFunctionClass .}}{{ end }}) *{{ .Name }} {
+func New{{ .Name }}({{ with .Service }}service *services.{{GetServiceClass .}}{{ end }}) *{{ .Name }} {
 	return &{{ .Name }}{
-		{{with .Function}}cmd: cmd,{{end}}
+		{{with .Service}}service: service,{{end}}
 	}
 }
 
 func (h {{ .Name }}) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	var body models.{{ .RequestBody }}
 	json.NewDecoder(r.Body).Decode(&body)
-	{{ with .Function}}
+	{{ with .Service}}
 	{{ GetHandlerLogicMethodString . }}
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)

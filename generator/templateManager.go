@@ -44,13 +44,6 @@ func (m TemplateManager) Generate() error {
 			Extension:       utils.Go,
 		},
 		{
-			Name:            "wire",
-			TemplatePath:    "./templates/wire.tmpl",
-			FileDestination: utils.Root,
-			ConfigModel:     config,
-			Extension:       utils.Go,
-		},
-		{
 			Name:            "Dockerfile",
 			TemplatePath:    "./templates/docker/Dockerfile.tmpl",
 			FileDestination: utils.Root,
@@ -123,6 +116,18 @@ func (m TemplateManager) Generate() error {
 		})
 	}
 
+	serviceFiles := make([]FileData, 0)
+	for _, service := range config.Services {
+		serviceFiles = append(serviceFiles, FileData{
+			Name:            service.Name,
+			TemplatePath:    "./templates/service.tmpl",
+			FileDestination: utils.Service,
+			ConfigModel:     service,
+			HasConstructor:  true,
+			Extension:       utils.Go,
+		})
+	}
+
 	modelFiles := make([]FileData, 0)
 	for _, model := range config.Models {
 		modelFiles = append(modelFiles, FileData{
@@ -137,6 +142,7 @@ func (m TemplateManager) Generate() error {
 
 	GenerateAll(filesToGenerate)
 	GeneratePackage("handlers", handlerFiles, utils.Handler)
+	GeneratePackage("services", serviceFiles, utils.Service)
 	GeneratePackage("models", modelFiles, utils.Model)
 	return nil
 }

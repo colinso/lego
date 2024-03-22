@@ -27,7 +27,7 @@ const (
 	Wire
 	Config
 	API
-	Logic
+	Service
 	DockerCompose
 	Dockerfile
 )
@@ -40,7 +40,7 @@ var dirPaths = map[FileLocation]string{
 	Wire:    "internal/wire",
 	Config:  "internal/config",
 	API:     "internal/api",
-	Logic:   "internal/logic",
+	Service: "internal/services",
 }
 
 func CreateFileForType(fLocation FileLocation, fname string, ext FileExtension) *os.File {

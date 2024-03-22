@@ -1,10 +1,7 @@
-package logic
+package services
 {{/* Expects serviceConfig */}}{{ $n := .Name}}
 import (
-	"{{ GetModuleName }}/internal/models"
-	"context"
 
-	"github.com/apex/log"
 )
 
 type {{ .Name }} struct {
@@ -13,9 +10,7 @@ type {{ .Name }} struct {
 func New{{ .Name }}() *{{ .Name }} {
 	return &{{ .Name }}{}
 }
-
 {{ range .Methods }} 
-func ({{ GetFirstLetter $n }} {{ $n }}) {{ .Name }}({{range $k, $v := .Accepts}}{{$k}} {{$v}},{{end}}) ({{range .Returns}}{{.}},{{end}}) {
-	return {{range .Returns}}{{ZeroValue .}},{{end}}
-}
-{{ end }}
+func ({{ GetFirstLetter $n }} {{ $n }}) {{ GetMethodSignatureByValue .Name .Accepts .Returns }} {
+	return {{ ZeroReturnValues .Returns}}
+}{{ end }}

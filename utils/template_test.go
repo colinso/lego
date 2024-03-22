@@ -6,6 +6,7 @@ import (
 
 	"github.com/colinso/lego/config"
 	configmodels "github.com/colinso/lego/config/models"
+	"github.com/colinso/lego/utils/datastructures"
 )
 
 func TestTemplateUtils_TypeOf(t *testing.T) {
@@ -45,6 +46,7 @@ func TestTemplateUtils_ZeroValue(t *testing.T) {
 		{description: "IntSuccess", input: "int", want: "0"},
 		{description: "FloatSuccess", input: "float64", want: "0"},
 		{description: "ObjectSuccess", input: "TestObject", want: "TestObject{}"},
+		{description: "PointerSuccess", input: "*TestObject", want: "nil"},
 	}
 
 	for _, tc := range tests {
@@ -61,11 +63,16 @@ func TestTemplateUtils_GetMethodSignatureByValue(t *testing.T) {
 		want  string
 	}
 
+	accepts := datastructures.NewOrderedMap[string, string]()
+	accepts.Set("arg1", "string")
+	accepts.Set("arg2", "bool")
+	accepts.Set("arg3", "TestConfigObject")
+
 	tests := []test{
 		{input: configmodels.Method{
 			Name:    "TestMethod",
-			Accepts: map[string]string{"arg1": "string", "arg2": "bool", "arg3": "TestConfigObject"},
-			Returns: []string{"int", "error"},
+			Accepts: *accepts,
+			Returns: "int",
 		}, want: "TestMethod(arg1 string, arg2 bool, arg3 TestConfigObject) (int, error)"},
 	}
 
@@ -78,26 +85,28 @@ func TestTemplateUtils_GetMethodSignatureByValue(t *testing.T) {
 }
 
 func TestTemplateUtils_GetMethodSignatureByName(t *testing.T) {
+	accepts1 := datastructures.NewOrderedMap[string, string]()
+	accepts1.Set("arg", "string")
+	accepts1.Set("something", "float64")
+
+	accepts2 := datastructures.NewOrderedMap[string, string]()
+	accepts2.Set("arg", "bool")
+	accepts2.Set("something", "float64")
+
 	config.SetConfig(configmodels.Base{
-		Logic: []configmodels.Service{
+		Services: []configmodels.Service{
 			{
 				Name: "TestClass",
 				Methods: []configmodels.Method{
 					{
-						Name: "Add",
-						Accepts: map[string]string{
-							"arg":       "string",
-							"something": "float64",
-						},
-						Returns: []string{"int", "error"},
+						Name:    "Add",
+						Accepts: *accepts1,
+						Returns: "int",
 					},
 					{
-						Name: "Subtract",
-						Accepts: map[string]string{
-							"arg":       "bool",
-							"something": "float64",
-						},
-						Returns: []string{"error"},
+						Name:    "Subtract",
+						Accepts: *accepts2,
+						Returns: "",
 					},
 				},
 			},
@@ -123,26 +132,28 @@ func TestTemplateUtils_GetMethodSignatureByName(t *testing.T) {
 }
 
 func TestTemplateUtils_GetHandlerLogicMethodString(t *testing.T) {
+	accepts1 := datastructures.NewOrderedMap[string, string]()
+	accepts1.Set("arg", "string")
+	accepts1.Set("something", "float64")
+
+	accepts2 := datastructures.NewOrderedMap[string, string]()
+	accepts2.Set("arg", "bool")
+	accepts2.Set("something", "float64")
+
 	config.SetConfig(configmodels.Base{
-		Logic: []configmodels.Service{
+		Services: []configmodels.Service{
 			{
 				Name: "TestClass",
 				Methods: []configmodels.Method{
 					{
-						Name: "Add",
-						Accepts: map[string]string{
-							"arg":       "string",
-							"something": "float64",
-						},
-						Returns: []string{"int", "error"},
+						Name:    "Add",
+						Accepts: *accepts1,
+						Returns: "int",
 					},
 					{
-						Name: "Subtract",
-						Accepts: map[string]string{
-							"arg":       "bool",
-							"something": "float64",
-						},
-						Returns: []string{"error"},
+						Name:    "Subtract",
+						Accepts: *accepts2,
+						Returns: "",
 					},
 				},
 			},

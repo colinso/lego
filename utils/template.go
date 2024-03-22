@@ -11,6 +11,7 @@ import (
 
 	"github.com/colinso/lego/config"
 	configmodels "github.com/colinso/lego/config/models"
+	"github.com/colinso/lego/utils/datastructures"
 
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
@@ -18,14 +19,17 @@ import (
 
 const (
 	String  = "string"
+	Error   = "error"
 	Integer = "int"
 	Float   = "float64"
 	Boolean = "bool"
 )
 
 var TemplateFuncs = template.FuncMap(map[string]any{
+	// global configs
 	"GetServiceName": func() string { return config.GetConfig().AppConfig["AppName"] },
 	"GetModuleName":  func() string { return config.GetConfig().Name },
+	// string
 	"ToConfigCase": func(str string) string {
 		var matchFirstCap = regexp.MustCompile("(.)([A-Z][a-z]+)")
 		var matchAllCap = regexp.MustCompile("([a-z0-9])([A-Z])")
@@ -33,39 +37,44 @@ var TemplateFuncs = template.FuncMap(map[string]any{
 		snake = matchAllCap.ReplaceAllString(snake, "${1}_${2}")
 		return strings.ToUpper(snake)
 	},
-	"TypeOf":                      TypeOf,
-	"TitleCasedTypeOf":            func(str string) string { return cases.Title(language.English).String(TypeOf(str)) },
-	"IsString":                    func(str string) bool { return TypeOf(str) == "string" },
-	"FirstToLower":                FirstToLower,
-	"GetFirstLetter":              func(str string) string { return string(str[0]) },
-	"IsLastIndexInMap":            IsLastIndexInMap[string, string],
-	"IsLastIndexInSlice":          IsLastIndexInSlice[string],
+	"TypeOf":           TypeOf,
+	"TitleCasedTypeOf": func(str string) string { return cases.Title(language.English).String(TypeOf(str)) },
+	"IsString":         func(str string) bool { return TypeOf(str) == "string" },
+	"FirstToLower":     FirstToLower,
+	"GetFirstLetter":   func(str string) string { return strings.ToLower(string(str[0])) },
+	// arrays
+	"IsLastIndexInMap":   IsLastIndexInMap[string, string],
+	"IsLastIndexInSlice": IsLastIndexInSlice[string],
+	"IsNotEmpty":         func(array []configmodels.Service) bool { return len(array) > 0 },
+	// values and methods
 	"ZeroValue":                   ZeroValue,
+	"ZeroReturnValues":            ZeroReturnValues,
 	"GetMethodSignatureByName":    GetMethodSignatureByName,
 	"GetMethodSignatureByValue":   GetMethodSignatureByValue,
-	"GetFunctionClass":            func(str string) string { return strings.Split(str, ".")[0] },
 	"GetHandlerLogicMethodString": GetHandlerLogicMethodString,
+	"GetServiceClass":             func(str string) string { return strings.Split(str, ".")[0] },
 })
 
 func GetHandlerLogicMethodString(name string) string {
 	m := GetLogicMethod(name)
 
 	argsString := ""
-	i := 0
-	for k, _ := range m.Accepts {
+
+	for i, k := range m.Accepts.Keys() {
 		argsString += "body." + cases.Title(language.English).String(k)
-		if i < len(m.Accepts)-1 {
+		if i < len(m.Accepts.Keys())-1 {
 			argsString += ", "
 		}
 		i++
 	}
-	return fmt.Sprintf("response, err := h.cmd.%v(%v)", m.Name, argsString)
+	return fmt.Sprintf("response, err := h.service.%v(%v)", m.Name, argsString)
 }
 
 func GetLogicMethod(name string) configmodels.Method {
 	names := strings.Split(name, ".")
-	logics := config.GetConfig().Logic
-	for _, v := range logics {
+	services := config.GetConfig().Services
+
+	for _, v := range services {
 		if v.Name == names[0] {
 			for _, m := range v.Methods {
 				if m.Name == names[1] {
@@ -83,27 +92,34 @@ func GetMethodSignatureByName(name string) string {
 	return GetMethodSignatureByValue(m.Name, m.Accepts, m.Returns)
 }
 
-func GetMethodSignatureByValue(name string, args map[string]string, returns []string) string {
+func GetMethodSignatureByValue(name string, args datastructures.OrderedMap[string, string], returns string) string {
 	i := 0
 	argsString := ""
-	for k, v := range args {
+	for _, k := range args.Keys() {
+		v, _ := args.Get(k)
 		argsString += fmt.Sprintf("%v %v", k, v)
-		if i < len(args)-1 {
+		if i < len(args.Keys())-1 {
 			argsString += ", "
 		}
 		i++
 	}
 
-	returnsString := ""
-	if len(returns) > 1 {
-		returnsString += "("
-	}
-	returnsString += strings.Join(returns, ", ")
-	if len(returns) > 1 {
-		returnsString += ")"
+	returnString := ""
+	if returns == "" {
+		returnString = "error"
+	} else {
+		returnString = fmt.Sprintf("(%v, error)", returns)
 	}
 
-	return fmt.Sprintf("%v(%v) %v", name, argsString, returnsString)
+	return fmt.Sprintf("%v(%v) %v", name, argsString, returnString)
+}
+
+func ZeroReturnValues(returns string) string {
+	if returns == "" {
+		return "nil"
+	} else {
+		return fmt.Sprintf("%v, nil", ZeroValue(returns))
+	}
 }
 
 func IsLastIndexInMap[K string, V any](m map[K]V, index int) bool {
@@ -115,16 +131,23 @@ func IsLastIndexInSlice[T any](arr []T, index int) bool {
 }
 
 func TypeOf(str string) string {
-	if strings.Contains(str, "\"") {
-		return String
+	pointerPrefix := ""
+	if strings.HasPrefix(str, "*") {
+		pointerPrefix = "*"
+	}
+
+	if strings.EqualFold(str, "\"error\"") {
+		return pointerPrefix + Error
+	} else if strings.Contains(str, "\"") {
+		return pointerPrefix + String
 	} else if strings.EqualFold(str, "true") || strings.EqualFold(str, "false") {
-		return Boolean
+		return pointerPrefix + Boolean
 	} else if _, err := strconv.ParseInt(str, 10, 64); err == nil {
-		return Integer
+		return pointerPrefix + Integer
 	} else if _, err := strconv.ParseFloat(str, 64); err == nil {
-		return Float
+		return pointerPrefix + Float
 	} else {
-		return str
+		return pointerPrefix + str
 	}
 }
 
@@ -135,9 +158,12 @@ func ZeroValue(valueType string) string {
 		return "false"
 	} else if valueType == Integer || valueType == Float {
 		return "0"
-	} else {
+	} else if valueType == Error {
+		return "nil"
+	} else if valueType != "" {
 		return valueType + "{}"
 	}
+	return ""
 }
 
 func FirstToLower(s string) string {

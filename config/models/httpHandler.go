@@ -6,7 +6,7 @@ type HTTPHandler struct {
 	Path         string `yaml:"path"`
 	RequestBody  string `yaml:"requestBody"`
 	ResponseBody string `yaml:"responseBody"`
-	Function     string `yaml:"function"`
+	Service      string `yaml:"service"`
 }
 
 func (c HTTPHandler) Validate() {
