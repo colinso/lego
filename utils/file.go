@@ -30,17 +30,21 @@ const (
 	Service
 	DockerCompose
 	Dockerfile
+	DB
+	Repo
 )
 
 var dirPaths = map[FileLocation]string{
 	Root:    ".",
 	Cmd:     "cmd",
 	Model:   "internal/models",
-	Handler: "internal/handlers",
+	Handler: "internal/handler",
 	Wire:    "internal/wire",
 	Config:  "internal/config",
 	API:     "internal/api",
-	Service: "internal/services",
+	Service: "internal/service",
+	DB:      "internal/db",
+	Repo:    "internal/repo",
 }
 
 func CreateFileForType(fLocation FileLocation, fname string, ext FileExtension) *os.File {

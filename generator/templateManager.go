@@ -101,6 +101,14 @@ func (m TemplateManager) Generate() error {
 			ConfigModel:     config.AppConfig,
 			Extension:       utils.Go,
 		},
+		// DB Files
+		{
+			Name:            "connection",
+			TemplatePath:    "./templates/db/connection.tmpl",
+			FileDestination: utils.DB,
+			ConfigModel:     config.Database,
+			Extension:       utils.Go,
+		},
 	}
 
 	// Generate packages and groups of files
@@ -128,6 +136,18 @@ func (m TemplateManager) Generate() error {
 		})
 	}
 
+	repoFiles := make([]FileData, 0)
+	for _, table := range config.Database.Schema {
+		serviceFiles = append(repoFiles, FileData{
+			Name:            table.TableName,
+			TemplatePath:    "./templates/repo.tmpl",
+			FileDestination: utils.Repo,
+			ConfigModel:     table,
+			HasConstructor:  true,
+			Extension:       utils.Go,
+		})
+	}
+
 	modelFiles := make([]FileData, 0)
 	for _, model := range config.Models {
 		modelFiles = append(modelFiles, FileData{
@@ -141,8 +161,9 @@ func (m TemplateManager) Generate() error {
 	}
 
 	GenerateAll(filesToGenerate)
-	GeneratePackage("handlers", handlerFiles, utils.Handler)
-	GeneratePackage("services", serviceFiles, utils.Service)
+	GeneratePackage("handler", handlerFiles, utils.Handler)
+	GeneratePackage("service", serviceFiles, utils.Service)
 	GeneratePackage("models", modelFiles, utils.Model)
+	GeneratePackage("repo", repoFiles, utils.Repo)
 	return nil
 }

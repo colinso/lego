@@ -1,0 +1,47 @@
+name: serviceB
+# Contains application configuration and environment variables
+appConfig:
+  AppName: serviceB #required
+  Host: localhost #required
+  Port: 8080 #required
+  EnvVar: hellothere
+
+# Creates object models
+models:
+  - name: APIHandlerRequest
+    fields:
+      Id: string
+      Value: int
+  - name: APIHandlerResponse
+    fields:
+      Id: string
+      Address: string
+      FirstName: string
+      StructVal: APIHandlerRequest
+
+# Creates an HTTP handler
+http:
+  - handlerName: GetObjectHandler
+    method: GET
+    path: /api/handler/{id}
+    requestBody: APIHandlerRequest
+    responseBody: APIHandlerResponse
+    service: ClassManager.GetClass
+
+# A service is a container for business logic
+services:
+  - name: ObjectManager
+    methods:
+      - name: GetObject
+        accepts:
+          test: string
+          another: int
+          tryThis: bool
+  - name: ClassManager
+    methods:
+      - name: GetClass
+        accepts:
+          id: string
+          value: int
+        returns: int # this will only return a single type and an error. Create a model to accommodate anything more than a single return value.
+

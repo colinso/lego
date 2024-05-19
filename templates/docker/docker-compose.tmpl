@@ -18,7 +18,7 @@ services: {{with .Database }}
       MYSQL_DATABASE: {{ .Name }}
       MYSQL_USER: {{ .User }}
       MYSQL_PASSWORD: {{ .Password }}
-    {{ else if eq .Type eq "mongo" }}
+    {{ else if eq .Type "mongo" }}
     image: mongo:latest
     container_name: {{ .Name }}
     ports:

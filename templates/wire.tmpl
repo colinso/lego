@@ -8,6 +8,7 @@ import (
 	"{{.Name}}/internal/config"
 	"{{.Name}}/internal/handlers"
 	{{ if IsNotEmpty .Services }}"{{.Name}}/internal/services"{{end}}
+	{{with .Database.Name}}"{{.}}/internal/db"{{end}}
 
 	"github.com/google/wire"
 )
@@ -17,6 +18,7 @@ func ConfigureServer() *api.Server {
 		config.NewConfig,
 		api.NewServer,
 		api.NewRouter,
+		{{with .Database.Name}}db.NewDBConnection,{{end}}
 
 		handlers.Component,
 		{{ if IsNotEmpty .Services }}services.Component,{{end}}

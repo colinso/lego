@@ -1,0 +1,52 @@
+package repo
+{{/* Expects tableConfig */}}{{ $n := ToTitle .TableName}}
+import (
+	"{{ GetModuleName }}/internal/models"
+	"context"
+
+	"github.com/apex/log"
+    "github.com/rs/xid"
+	"github.com/huandu/go-sqlbuilder"
+	"github.com/jackc/pgx/v5"
+)
+
+type {{ $n }}Repo struct {
+	conn *pgx.Conn
+}
+
+func New{{ $n }}Repo(conn *pgx.Conn) *{{ $n }}Repo {
+	return &{{ $n }}Repo{
+		conn: conn,
+	}
+}
+
+{{ if SliceContains .Ops "create" }}
+func (r {{ $n }}Repo) Create{{ $n }}(m models.{{ .Model }}) error {
+	builder := sqlbuilder.NewInsertBuilder()
+	{{ BuilderFunc .}}
+
+	_, err := r.conn.Exec(context.Background(), sqlString, args...)
+	if err != nil {
+		log.WithError(err).Error("Error creating item in DB")
+		return err
+	}
+	return nil
+}
+{{end}}
+
+{{ if SliceContains .Ops "read" }}
+func (i ItemsRepo) Get{{ .TableName }}ById(ctx context.Context, id string) (models.Item, error) {
+	builder := sqlbuilder.NewSelectBuilder()
+	sqlString, args := builder.
+		Select("*").
+		From("{{ .TableName }}").
+		Where(builder.Equal("id", id)).
+		BuildWithFlavor(sqlbuilder.PostgreSQL)
+
+	row := i.conn.QueryRow(ctx, sqlString, args...)
+
+	var item models.Item
+	err := row.Scan(&item.ID, &item.Name, &item.ImageURL, &item.Count, &item.Price)
+	return item, err
+}
+{{end}}

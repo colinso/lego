@@ -8,23 +8,18 @@ appConfig:
 
 # Creates object models
 models:
-  - name: APIHandlerRequest
-    fields:
-      Id: string
-      Value: int
-  - name: APIHandlerResponse
-    fields:
-      Id: string
-      Address: string
-      FirstName: string
-      StructVal: APIHandlerRequest
-  - name: MyTableModel
+  - name: User
     fields:
       Id: string
       FirstName: string
       LastName: string
       Address: string
       Age: int
+    ops:
+      - create
+      - read
+      - update
+      - delete
 
 # Creates an HTTP handler
 http:
@@ -47,6 +42,8 @@ services:
   - name: ClassManager
     methods:
       - name: GetClass
+        # depends:
+        #   - 
         accepts:
           id: string
           value: int
@@ -61,4 +58,3 @@ db:
   schema:
     - tableName: MyTable
       model: MyTableModel
-

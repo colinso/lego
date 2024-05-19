@@ -21,7 +21,10 @@ type Base struct {
 }
 
 func (c Base) Validate() {
-	ValidateFields(c)
+	// ValidateFields(c)
+	c.AppConfig["DBPassword"] = c.Database.Password
+	c.AppConfig["DBUser"] = c.Database.User
+	c.AppConfig["DBName"] = c.Database.Name
 	c.AppConfig.Validate()
-	c.Database.Validate()
+	// c.Database.Validate()
 }

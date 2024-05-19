@@ -2,7 +2,7 @@ package handlers
 {{/* Expects httpHandlerConfig */}}
 import (
 	"{{ GetModuleName }}/internal/models"
-	{{ with .Service}}"{{ GetModuleName }}/internal/services"{{end}}
+	{{ with .Service}}"{{ GetModuleName }}/internal/services"{{else}}"fmt"{{end}}
 	"encoding/json"
 	"net/http"
 )
@@ -31,7 +31,8 @@ func (h {{ .Name }}) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	{{else}}
-	response := fmt.Sprintf("Hit {{.Name}} with body: %v%", body)
+	bodyBytes, _ := json.Marshal(body)
+	response := fmt.Sprintf("Hit {{.Name}} with body: %v", string(bodyBytes))
 	{{end}}
 	b, _ := json.Marshal(response)
 	w.Write(b)

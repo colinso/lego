@@ -1,0 +1,28 @@
+name: serviceA
+# Contains application configuration and environment variables
+appConfig:
+  AppName: serviceA #required
+  Host: localhost #required
+  Port: 8080 #required
+  EnvVar: hellothere
+
+# Creates object models
+models:
+  - name: APIHandlerRequest
+    fields:
+      Id: string
+      Value: int
+  - name: APIHandlerResponse
+    fields:
+      Id: string
+      Address: string
+      FirstName: string
+      StructVal: APIHandlerRequest
+
+# Creates an HTTP handler
+http:
+  - handlerName: CreateObjectHandler
+    method: POST
+    path: /api/handler
+    requestBody: APIHandlerRequest
+    responseBody: APIHandlerResponse

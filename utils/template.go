@@ -13,6 +13,7 @@ import (
 	configmodels "github.com/colinso/lego/config/models"
 	"github.com/colinso/lego/utils/datastructures"
 
+	"golang.org/x/exp/slices"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
 )
@@ -41,10 +42,12 @@ var TemplateFuncs = template.FuncMap(map[string]any{
 	"TitleCasedTypeOf": func(str string) string { return cases.Title(language.English).String(TypeOf(str)) },
 	"IsString":         func(str string) bool { return TypeOf(str) == "string" },
 	"FirstToLower":     FirstToLower,
+	"ToTitle":          cases.Title(language.English).String,
 	"GetFirstLetter":   func(str string) string { return strings.ToLower(string(str[0])) },
 	// arrays
 	"IsLastIndexInMap":   IsLastIndexInMap[string, string],
 	"IsLastIndexInSlice": IsLastIndexInSlice[string],
+	"SliceContains":      slices.Contains[[]string, string],
 	"IsNotEmpty":         func(array []configmodels.Service) bool { return len(array) > 0 },
 	// values and methods
 	"ZeroValue":                   ZeroValue,
@@ -53,6 +56,8 @@ var TemplateFuncs = template.FuncMap(map[string]any{
 	"GetMethodSignatureByValue":   GetMethodSignatureByValue,
 	"GetHandlerLogicMethodString": GetHandlerLogicMethodString,
 	"GetServiceClass":             func(str string) string { return strings.Split(str, ".")[0] },
+	// repo
+	"BuilderFunc": CreateBuilderFunc,
 })
 
 func GetHandlerLogicMethodString(name string) string {
@@ -176,4 +181,46 @@ func FirstToLower(s string) string {
 		return s
 	}
 	return string(lc) + s[size:]
+}
+func GetModelByName(modelName string) configmodels.Model {
+	modelIndex := slices.IndexFunc(config.GetConfig().Models, func(a configmodels.Model) bool {
+		return a.Name == modelName
+	})
+	return config.GetConfig().Models[modelIndex]
+}
+
+func CreateBuilderFunc(table configmodels.Table) string {
+	builderFunc := `sqlString, args := builder.
+		InsertInto("%s").
+		Cols(%s).
+		Values(%s).
+		BuildWithFlavor(sqlbuilder.PostgreSQL)`
+	model := GetModelByName(table.Model)
+	cols := ""
+	vals := ""
+	for k, _ := range model.Fields {
+		cols += fmt.Sprintf("\"%s\",", strings.ToLower(k))
+		vals += fmt.Sprintf("m.%s,", k)
+	}
+	cols = strings.TrimRight(cols, ",")
+	vals = strings.TrimRight(vals, ",")
+	return fmt.Sprintf(builderFunc, table.TableName, cols, vals)
+}
+
+func GetBuilderFunc(table configmodels.Table) string {
+	builderFunc := `sqlString, args := builder.
+		InsertInto("%s").
+		Cols(%s).
+		Values(%s).
+		BuildWithFlavor(sqlbuilder.PostgreSQL)`
+	model := GetModelByName(table.Model)
+	cols := ""
+	vals := ""
+	for k, _ := range model.Fields {
+		cols += fmt.Sprintf("\"%s\",", strings.ToLower(k))
+		vals += fmt.Sprintf("m.%s,", k)
+	}
+	cols = strings.TrimRight(cols, ",")
+	vals = strings.TrimRight(vals, ",")
+	return fmt.Sprintf(builderFunc, table.TableName, cols, vals)
 }

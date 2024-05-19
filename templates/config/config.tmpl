@@ -1,5 +1,7 @@
 package config
 
+import "fmt"
+
 const (
 	envDev = "dev"
 )
@@ -12,6 +14,10 @@ type Config struct {
 // SetEnvs is where you should bind env keys to a config field
 func (c Config) SetEnvs(setter *configSetter) { {{ range $key, $value := . }} 
     setter.Set{{ TitleCasedTypeOf $value }}Env("{{ ToConfigCase $key }}", &c.{{ $key }}){{ end }}
+}
+
+func (c Config) GetDBConnectionString() string {
+	return fmt.Sprintf("postgres://%v:%v@localhost:5432/%v", c.DBUser, c.DBPassword, c.DBName)
 }
 
 // NewConfig will set up config initialization and return a new, populated config

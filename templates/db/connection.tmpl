@@ -1,0 +1,19 @@
+package db
+
+import (
+	"{{ GetModuleName }}/internal/config"
+	"context"
+
+	"github.com/apex/log"
+
+	"github.com/jackc/pgx/v5"
+)
+
+func NewDBConnection(cfg *config.Config) *pgx.Conn {
+	conn, err := pgx.Connect(context.Background(), cfg.GetDBConnectionString())
+	if err != nil {
+		log.WithError(err).Error("Unable to connect to DB")
+		panic(err)
+	}
+	return conn
+}
