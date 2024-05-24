@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 
@@ -17,19 +18,24 @@ func main() {
 		Usage: "Build a microservice piece by piece",
 		Commands: []*cli.Command{
 			{
-				Name:    "generate",
-				Aliases: []string{"gen", "g"},
-				Usage:   "Generate code from a config file",
+				Name:      "generate",
+				Aliases:   []string{"gen", "g"},
+				ArgsUsage: "lego generate <config path> <project path>",
+				Usage:     "Generate code from a config file",
 				Action: func(cCtx *cli.Context) error {
 					configPath := cCtx.Args().First()
 					projectPath := cCtx.Args().Get(1)
+					if configPath == "" || projectPath == "" {
+						fmt.Println("Please provide a config path and a project path")
+						return nil
+					}
 					config.ParseConfig(configPath, projectPath)
 					err := generator.NewCodeGenerator().Generate()
 					if err != nil {
 						return err
 					}
 					appName := config.GetConfig().Name
-					//TODO: Update this to take location as an argument
+
 					utils.RunCleanupShellCommands(appName, projectPath)
 					return nil
 				},

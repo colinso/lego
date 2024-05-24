@@ -1,13 +1,13 @@
 package api
 
 import (
-	"{{ GetModuleName }}/internal/handlers"
+	"{{ GetModuleName }}/internal/handler"
 
 	"github.com/go-chi/chi/v5"
 )
 
 func NewRouter({{ range $value := . }}
-        {{ FirstToLower $value.Name }} *handlers.{{ $value.Name }},
+        {{ FirstToLower $value.Name }} *handler.{{ $value.Name }},
     ) *chi.Mux {
 	r := chi.NewRouter()
     r.Method("{{ $value.Method }}", "{{ $value.Path }}", {{ FirstToLower $value.Name }})

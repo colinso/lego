@@ -1,8 +1,8 @@
-package handlers
+package handler
 {{/* Expects httpHandlerConfig */}}
 import (
 	"{{ GetModuleName }}/internal/models"
-	{{ with .Service}}"{{ GetModuleName }}/internal/services"{{else}}"fmt"{{end}}
+	{{ with .Service}}"{{ GetModuleName }}/internal/service"{{else}}"fmt"{{end}}
 	"encoding/json"
 	"net/http"
 )
@@ -14,7 +14,7 @@ type {{ .Name }} struct {
 	{{with .Service}}service {{ $name }}Service{{end}}
 }
 
-func New{{ .Name }}({{ with .Service }}service *services.{{GetServiceClass .}}{{ end }}) *{{ .Name }} {
+func New{{ .Name }}({{ with .Service }}service *service.{{GetServiceClass .}}{{ end }}) *{{ .Name }} {
 	return &{{ .Name }}{
 		{{with .Service}}service: service,{{end}}
 	}

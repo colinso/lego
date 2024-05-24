@@ -3,7 +3,7 @@ name: serviceB
 appConfig:
   AppName: serviceB #required
   Host: localhost #required
-  Port: 8080 #required
+  Port: 8081 #required
   EnvVar: hellothere
 
 # Creates object models
